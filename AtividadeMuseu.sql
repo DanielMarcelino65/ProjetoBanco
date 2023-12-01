@@ -178,34 +178,41 @@ $$ LANGUAGE plpgsql;
 
 SELECT drop_null_columns();
 
-CREATE VIEW distribuicao_geografica AS
+CREATE OR REPLACE VIEW distribuicao_geografica AS
 SELECT countryCode, COUNT(*) AS total_registros
 FROM localizacao
 GROUP BY countryCode;
 
-select * from distribuicao_geografica
+CREATE OR REPLACE VIEW distribuicao_estado_cidade AS
+SELECT localizacao.stateprovince,
+    localizacao.locality,
+    count(*) AS total_registros
+   FROM localizacao
+  GROUP BY localizacao.stateprovince, localizacao.locality
 
-CREATE VIEW analise_anual_registros AS
+select * from distribuicao_geografica;
+
+CREATE OR REPLACE VIEW analise_anual_registros AS
 SELECT year, COUNT(*) AS total_registros
 FROM eventos
 GROUP BY year;
 
-select * from analise_anual_registros
+select * from analise_anual_registros;
 
-CREATE VIEW registros_por_categoria_taxonomica AS
+CREATE OR REPLACE VIEW registros_por_categoria_taxonomica AS
 SELECT kingdom, phylum, class, COUNT(*) AS total_registros
 FROM taxonomica
 GROUP BY kingdom, phylum, class;
 
-select * from registros_por_categoria_taxonomica
+select * from registros_por_categoria_taxonomica;
 
-\copy registros FROM 'C:\Users\danma\Downloads\registros_teste.csv' WITH DELIMITER ',' CSV HEADER;
+--\copy registros FROM 'C:\Users\danma\Downloads\registros_teste.csv' WITH DELIMITER ',' CSV HEADER;
 
 
-select * from analise_anual_registros
+select * from analise_anual_registros;
 
 	
-CREATE VIEW top_contributors AS
+CREATE OR REPLACE VIEW top_contributors AS
 SELECT 
     rb.recordedByPerson,
     COUNT(rrb.gbifID) AS num_registros
@@ -219,9 +226,9 @@ ORDER BY
     num_registros DESC
 LIMIT 10;
 
-select * from top_contributors
+select * from top_contributors;
 
-CREATE VIEW view_erros_registros AS
+CREATE OR REPLACE VIEW view_erros_registros AS
 SELECT 
     i.issue,
     COUNT(ri.gbifID) AS quantidade_registros
@@ -232,10 +239,10 @@ JOIN
 GROUP BY 
     i.issue;
 
-select * from view_erros_registros
+select * from view_erros_registros;
 
 
-CREATE VIEW distribuicao_taxonomica AS
+CREATE OR REPLACE VIEW distribuicao_taxonomica AS
 SELECT 
     t.kingdom,
     t.phylum,
@@ -250,7 +257,7 @@ FROM
 GROUP BY 
     ROLLUP(t.kingdom, t.phylum, t.class, t.order, t.family, t.genus, t.species);
 
-select * from distribuicao_taxonomica
+select * from distribuicao_taxonomica;
 
 
 

@@ -7,6 +7,8 @@ import plotly.graph_objects as go
 from dash_bootstrap_templates import ThemeSwitchAIO
 import psycopg2
 
+from connectioninfo import *
+
 
 opcoes_estados = [{'label': estado, 'value': estado} for estado in df_estados['stateprovince'].unique() if estado is not None]
 
@@ -94,11 +96,11 @@ def update_graph(theme):
 )
 def update_graph_estado_cidade(estado_selecionado):
     conexao = psycopg2.connect(
-        dbname="ProjetoMuseu",
-        user="postgres",
-        password="daniel12345",
-        host="localhost", 
-        port="5432"
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host, 
+        port=port
     )
 
     if estado_selecionado:
